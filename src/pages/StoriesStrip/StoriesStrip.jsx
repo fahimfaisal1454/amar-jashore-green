@@ -1,10 +1,9 @@
 // src/Pages/StoriesStrip/StoriesStrip.jsx
 import React from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
+import { ABS } from "../../api/endpoints"; // ← use shared absolute-URL helper
 
-// Works with or without VITE_API_BASE
-const API = import.meta.env?.VITE_API_BASE || "http://127.0.0.1:8000";
-const fileUrl = (p) => (p ? (p.startsWith("http") ? p : `${API}${p}`) : "");
+const fileUrl = (p) => (!p ? "" : ABS(p));
 const FALLBACK = "/src/assets/news/placeholder.jpg";
 
 // THEME close to blog.brac.net look
@@ -57,7 +56,7 @@ export default function StoriesStrip() {
       let cancel = false;
       (async () => {
         try {
-          const res = await fetch(`${API}/api/stories/${encodeURIComponent(id)}/`);
+          const res = await fetch(ABS(`/api/stories/${encodeURIComponent(id)}/`));
           const s = await res.json();
           if (cancel) return;
           setStory({
@@ -143,7 +142,7 @@ export default function StoriesStrip() {
   const [items, setItems] = React.useState([]);
 
   React.useEffect(() => {
-    fetch(`${API}/api/stories/`)
+    fetch(ABS(`/api/stories/`))
       .then((r) => r.json())
       .then((rows) => {
         const mapped = (rows || [])
